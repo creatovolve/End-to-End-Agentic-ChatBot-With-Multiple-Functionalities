@@ -24,4 +24,8 @@ class LoadUI:
                 self.user_choices["GROQ_API_KEY"]=st.session_state["GROQ_API_KEY"]=st.text_input("API Key", type='password')
             self.user_choices["selected_usecase"]=st.selectbox("Select Usecases", use_case_options)
 
+            if self.user_choices["selected_usecase"] == "Chatbot with Web":
+                os.environ["TAVILY_API_KEY"] = self.user_choices["TAVILY_API_KEY"] = st.session_state["TAVILY_API_KEY"] = st.text_input("TAVILY API KEY", type="password")
+
+
         return self.user_choices
