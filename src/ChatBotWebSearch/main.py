@@ -7,6 +7,7 @@ from src.ChatBotWebSearch.ui.display_result import DisplayResult
 def load_agenticai_app():
     ui = LoadUI()
     user_input = ui.load_streamlit_ui()
+                
 
     if not user_input:
         st.error("Failed To Load UI Selections")
@@ -18,7 +19,7 @@ def load_agenticai_app():
         try:
             obj_groq_config = groqLLM(user_choices=user_input)
             model = obj_groq_config.get_llm_model()
-
+                
             if not model:
                 st.error("Model Could not be loaded")
                 return
@@ -30,7 +31,8 @@ def load_agenticai_app():
             graph_builder = GraphBuilder(model=model)
             try:
                 graph = graph_builder.setup_graph(user_choices=user_input)
-                DisplayResult(usecase=usecase, graph=graph, user_message=user_message).display_result_on_ui()
+                DisplayResult(usecase=usecase, graph=graph, user_message=user_message, time_frame = user_input["time_frame"]).display_result_on_ui()
+                
             except Exception as e:
                 st.error(f"Error: Graph loading failed : {e}")
                 return

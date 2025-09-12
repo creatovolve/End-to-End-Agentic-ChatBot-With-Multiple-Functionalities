@@ -18,3 +18,4 @@ pydantic
 langchain_community
 langgraph
 streamlit
+tavily-python

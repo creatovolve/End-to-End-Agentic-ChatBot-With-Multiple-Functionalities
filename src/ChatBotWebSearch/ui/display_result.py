@@ -2,10 +2,11 @@ import streamlit as st
 from langchain_core.messages import HumanMessage, AIMessage, SystemMessage, ToolMessage
 
 class DisplayResult:
-    def __init__(self, usecase, graph, user_message):
+    def __init__(self, usecase, graph, user_message, time_frame):
         self.usecase = usecase
         self.graph = graph
         self.user_message = user_message
+        self.time_frame = time_frame
 
 
     def display_result_on_ui(self):
@@ -33,3 +34,12 @@ class DisplayResult:
                 elif type(msg) == AIMessage and msg.content:
                     with st.chat_message("Assistant"):
                         st.write(msg.content)
+
+        elif self.usecase == "AI News Summary":
+            with st.spinner("Fetching Summarized News"):
+                result = self.graph.invoke({'messages': [self.time_frame, self.user_message]})
+                AI_NEWS_PATH = f"AINews/{self.time_frame}_summary.md"
+                with open(AI_NEWS_PATH, "r") as f:
+                    mk_content = f.read()
+
+                st.markdown(mk_content, unsafe_allow_html=True)

@@ -16,6 +16,8 @@ class LoadUI:
             llm_options = self.config.get_llm_options()
             use_case_options = self.config.get_usecase_options()
 
+            self.user_choices["time_frame"] = ""
+
             self.user_choices["selected_llm"]=st.selectbox("Select LLM", llm_options)
             
             if self.user_choices["selected_llm"] == "Groq":
@@ -32,9 +34,6 @@ class LoadUI:
 
                 with st.sidebar:
                     time_frame = st.selectbox("Select Time Frame", ["Daily", "Weekly", "Monthly"], index=0)
-
-                if st.button("Fetch News"):
-                    st.session_state.time_frame = time_frame
-                    st.session_state.IsFetchButtonPressed = True 
+                    self.user_choices["time_frame"] = time_frame.lower()
 
         return self.user_choices

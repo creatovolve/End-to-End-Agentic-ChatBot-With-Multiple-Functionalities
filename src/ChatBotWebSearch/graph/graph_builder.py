@@ -5,6 +5,7 @@ from src.ChatBotWebSearch.node.chatbot_with_websearch_node import ChatBotNodeWit
 from src.ChatBotWebSearch.tools.search_tool import get_tools, create_tool_node
 from langgraph.prebuilt import tools_condition
 from src.ChatBotWebSearch.node.chatbot_with_websearch_node import ChatBotNodeWithWebSearch
+from src.ChatBotWebSearch.node.ai_news_node import AINewsNode
 
 class GraphBuilder:
     def __init__(self, model):
@@ -40,11 +41,28 @@ class GraphBuilder:
         return self.graph_builder.compile()
     
 
+    def news_summarizer_node(self):
+        ai_news_node = AINewsNode(self.llm)
+
+        self.graph_builder.add_node("fetch_news", ai_news_node.fetch_news )
+        self.graph_builder.add_node("summarize_news", ai_news_node.summarize_news)
+        self.graph_builder.add_node("save_result", ai_news_node.save_result)
+
+        self.graph_builder.set_entry_point("fetch_news")
+        self.graph_builder.add_edge("fetch_news", "summarize_news")
+        self.graph_builder.add_edge("summarize_news", "save_result")
+
+        self.graph_builder.add_edge("save_result", END)
+
+        return self.graph_builder.compile()
+        
     
     def setup_graph(self, user_choices):
         if user_choices["selected_usecase"]=="Basic Chatbot":
             return self.basic_chatbot_build_graph()
         
         elif user_choices["selected_usecase"]=="Chatbot with Web":
-            print("yessss")
             return self.websearch_chatbot_build_graph()
+        
+        elif user_choices["selected_usecase"]=="AI News Summary":
+            return self.news_summarizer_node()
